@@ -97,7 +97,7 @@ src/test/kotlin/org/example/stepik/
     └── StepSourcePanelTest.kt          # Form ↔ model binding
 ```
 
-**Structure Decision**: Single IntelliJ plugin project. Standard `src/main/kotlin` + `src/test/kotlin` layout following IntelliJ plugin conventions. Package root: `org.example.stepik`. Six sub-packages by responsibility: `model`, `api`, `editor`, `navigator`, `sync`, `service`.
+**Structure Decision**: Single IntelliJ plugin project. Standard `src/main/kotlin` + `src/test/kotlin` layout following IntelliJ plugin conventions. Package root: `com.stellarflux.stepik`. Six sub-packages by responsibility: `model`, `api`, `editor`, `navigator`, `sync`, `service`.
 
 ## Complexity Tracking
 

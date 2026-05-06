@@ -4,7 +4,7 @@ plugins {
     kotlin("plugin.serialization") version "2.2.21"
 }
 
-group = "org.example"
+group = "com.stellarflux"
 version = "1.0-SNAPSHOT"
 
 repositories {

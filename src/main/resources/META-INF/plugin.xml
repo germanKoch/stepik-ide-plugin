@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>org.example.stepik</id>
+    <id>com.stellarflux.stepik</id>
     <name>Stepik Course Editor</name>
     <version>1.0-SNAPSHOT</version>
     <vendor>ai-sec-lab</vendor>
@@ -9,19 +9,19 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="Stepik"
-                  implementationClass="org.example.stepik.StepikFileType"
+                  implementationClass="com.stellarflux.stepik.StepikFileType"
                   fieldName="INSTANCE"
                   extensions="stepik"/>
-        <projectService serviceImplementation="org.example.stepik.service.StepikProjectService"/>
-        <fileEditorProvider implementation="org.example.stepik.editor.StepikEditorProvider"/>
+        <projectService serviceImplementation="com.stellarflux.stepik.service.StepikProjectService"/>
+        <fileEditorProvider implementation="com.stellarflux.stepik.editor.StepikEditorProvider"/>
         <toolWindow id="Stepik Navigator"
                     anchor="left"
-                    factoryClass="org.example.stepik.navigator.StepikToolWindowFactory"/>
+                    factoryClass="com.stellarflux.stepik.navigator.StepikToolWindowFactory"/>
         <notificationGroup id="Stepik" displayType="BALLOON"/>
     </extensions>
 
     <projectListeners>
-        <listener class="org.example.stepik.service.StepikSaveListener"
+        <listener class="com.stellarflux.stepik.service.StepikSaveListener"
                   topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
     </projectListeners>
 </idea-plugin>

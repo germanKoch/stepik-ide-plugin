@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorTextField
+import com.intellij.ui.components.JBScrollPane
 import org.example.stepik.model.StepContent
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -34,7 +35,7 @@ class TextStepForm(project: Project) : StepForm {
                 changeListeners.forEach { it() }
             }
         })
-        panel.add(htmlEditor, BorderLayout.CENTER)
+        panel.add(JBScrollPane(htmlEditor), BorderLayout.CENTER)
     }
 
     override fun setContent(content: StepContent) {

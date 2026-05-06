@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.JBUI
 import kotlinx.serialization.json.*
 import org.example.stepik.model.StepContent
 import java.awt.BorderLayout
@@ -50,19 +51,32 @@ class MatchingStepForm(project: Project) : StepForm {
             add(buttons, BorderLayout.SOUTH)
         }
 
+        val settingsContent = JPanel(BorderLayout()).apply {
+            add(metaPanel, BorderLayout.NORTH)
+            add(tablePanel, BorderLayout.CENTER)
+        }
+
+        val collapseButton = JButton("Hide Settings").apply {
+            border = JBUI.Borders.empty(2, 8)
+        }
+        val settingsWrapper = JPanel(BorderLayout()).apply {
+            add(collapseButton, BorderLayout.NORTH)
+            add(settingsContent, BorderLayout.CENTER)
+        }
+        collapseButton.addActionListener {
+            settingsContent.isVisible = !settingsContent.isVisible
+            collapseButton.text = if (settingsContent.isVisible) "Hide Settings" else "Show Settings"
+            panel.revalidate()
+        }
+
         val htmlFileType = FileTypeManager.getInstance().getFileTypeByExtension("html")
         htmlEditor = EditorTextField("", project, htmlFileType).apply {
             setOneLineMode(false)
             addSettingsProvider { editor -> editor.settings.apply { isUseSoftWraps = true; isLineNumbersShown = true } }
         }
 
-        val topPanel = JPanel(BorderLayout()).apply {
-            add(metaPanel, BorderLayout.NORTH)
-            add(tablePanel, BorderLayout.CENTER)
-        }
-
-        panel.add(topPanel, BorderLayout.NORTH)
-        panel.add(htmlEditor, BorderLayout.CENTER)
+        panel.add(settingsWrapper, BorderLayout.NORTH)
+        panel.add(JBScrollPane(htmlEditor), BorderLayout.CENTER)
 
         costSpinner.addChangeListener { fireChange() }
         preserveFirstsOrderCheckbox.addActionListener { fireChange() }

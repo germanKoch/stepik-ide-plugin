@@ -83,6 +83,7 @@ class StringStepForm(project: Project) : StepForm {
 
     override fun setContent(content: StepContent) {
         htmlEditor.text = content.text
+        costSpinner.value = content.cost
         val src = content.source ?: return
         patternField.text = src["pattern"]?.jsonPrimitive?.contentOrNull ?: ""
         useReCheckbox.isSelected = src["use_re"]?.jsonPrimitive?.booleanOrNull ?: false
@@ -98,7 +99,7 @@ class StringStepForm(project: Project) : StepForm {
             put("case_sensitive", caseSensitiveCheckbox.isSelected)
             put("code", "")
         }
-        return StepContent(text = htmlEditor.text, source = source)
+        return StepContent(text = htmlEditor.text, source = source, cost = costSpinner.value as Int)
     }
 
     override fun addChangeListener(listener: () -> Unit) { changeListeners.add(listener) }

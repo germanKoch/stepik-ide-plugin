@@ -7,4 +7,5 @@ import kotlinx.serialization.json.JsonObject
 data class StepContent(
     val text: String = "",
     val source: JsonObject? = null,
+    val cost: Int = 0,
 )

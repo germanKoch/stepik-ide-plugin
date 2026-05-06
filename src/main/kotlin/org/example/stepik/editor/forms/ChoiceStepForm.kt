@@ -125,8 +125,8 @@ class ChoiceStepForm(project: Project) : StepForm {
 
     override fun setContent(content: StepContent) {
         htmlEditor.text = content.text
+        costSpinner.value = content.cost
         val src = content.source ?: return
-        costSpinner.value = 0
         multipleChoiceCheckbox.isSelected = src["is_multiple_choice"]?.jsonPrimitive?.booleanOrNull ?: false
         preserveOrderCheckbox.isSelected = src["preserve_order"]?.jsonPrimitive?.booleanOrNull ?: false
         feedbackCorrectField.text = src["feedback_correct"]?.jsonPrimitive?.contentOrNull ?: ""
@@ -164,7 +164,7 @@ class ChoiceStepForm(project: Project) : StepForm {
             put("is_always_correct", false)
             put("is_html_enabled", true)
         }
-        return StepContent(text = htmlEditor.text, source = source)
+        return StepContent(text = htmlEditor.text, source = source, cost = costSpinner.value as Int)
     }
 
     override fun addChangeListener(listener: () -> Unit) { changeListeners.add(listener) }

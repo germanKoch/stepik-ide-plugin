@@ -85,10 +85,11 @@ class StepikApiClient(private val auth: StepikAuth) {
             ?: throw RuntimeException("Step-source $stepId not found")
     }
 
-    fun updateStepSource(stepId: Int, block: JsonObject, position: Int? = null): JsonObject {
+    fun updateStepSource(stepId: Int, block: JsonObject, position: Int? = null, cost: Int? = null): JsonObject {
         val fields = buildJsonObject {
             put("block", block)
             position?.let { put("position", JsonPrimitive(it)) }
+            cost?.let { put("cost", JsonPrimitive(it)) }
         }
         val body = buildJsonObject { put("step-source", fields) }
         val result = put("step-sources/$stepId", body)
@@ -133,7 +134,7 @@ class StepikApiClient(private val auth: StepikAuth) {
                             position = stepPosition,
                             type = stepType,
                             cost = stepCost,
-                            remote = StepContent(text = fullText, source = sourceData),
+                            remote = StepContent(text = fullText, source = sourceData, cost = stepCost),
                         )
                     }
 

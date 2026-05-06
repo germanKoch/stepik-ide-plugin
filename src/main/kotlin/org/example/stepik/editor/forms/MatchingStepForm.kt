@@ -88,6 +88,7 @@ class MatchingStepForm(project: Project) : StepForm {
 
     override fun setContent(content: StepContent) {
         htmlEditor.text = content.text
+        costSpinner.value = content.cost
         val src = content.source ?: return
         preserveFirstsOrderCheckbox.isSelected = src["preserve_firsts_order"]?.jsonPrimitive?.booleanOrNull ?: false
         tableModel.rowCount = 0
@@ -114,7 +115,7 @@ class MatchingStepForm(project: Project) : StepForm {
             put("preserve_firsts_order", preserveFirstsOrderCheckbox.isSelected)
             put("is_html_enabled", true)
         }
-        return StepContent(text = htmlEditor.text, source = source)
+        return StepContent(text = htmlEditor.text, source = source, cost = costSpinner.value as Int)
     }
 
     override fun addChangeListener(listener: () -> Unit) { changeListeners.add(listener) }

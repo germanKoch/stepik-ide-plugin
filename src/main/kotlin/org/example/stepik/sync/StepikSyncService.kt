@@ -80,7 +80,7 @@ class StepikSyncService(private val project: Project) {
                     try {
                         val content = step.effectiveContent
                         val block = buildStepBlock(step.type, content.text, content.source)
-                        client.updateStepSource(step.id, block)
+                        client.updateStepSource(step.id, block, cost = content.cost)
                     } catch (e: Exception) {
                         errors.add("Step ${step.id}: ${e.message}")
                     }

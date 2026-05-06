@@ -43,7 +43,7 @@ class StepPreviewPanel : Disposable {
             <meta charset="utf-8">
             <style>
                 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                       padding: 16px; margin: 0; line-height: 1.6; color: #333; }
+                       padding: 16px; margin: 0; line-height: 1.6; color: #333; background: #fff; }
                 code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
                 pre { background: #f4f4f4; padding: 12px; border-radius: 6px; overflow-x: auto; }
                 img { max-width: 100%; height: auto; }

@@ -254,6 +254,7 @@ class StepikSplitEditor(
     override fun removePropertyChangeListener(listener: PropertyChangeListener) {
         propertyChangeSupport.removePropertyChangeListener(listener)
     }
+    override fun getFile(): VirtualFile = file
     override fun getCurrentLocation(): FileEditorLocation? = null
     override fun dispose() {
         previewPanel?.dispose()

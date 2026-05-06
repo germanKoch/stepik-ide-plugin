@@ -13,6 +13,7 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBTextField
 import org.example.stepik.api.EnvReader
 import org.example.stepik.api.StepikApiClient
 import org.example.stepik.api.StepikAuth
@@ -22,6 +23,9 @@ import org.example.stepik.service.StepikProjectService
 import org.example.stepik.sync.StepikSyncService
 import java.awt.BorderLayout
 import java.awt.FlowLayout
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.awt.Insets
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
 import javax.swing.JButton
@@ -50,61 +54,65 @@ class StepikSplitEditor(
     init {
         fileData = service.loadFile(file)
         if (fileData == null) {
-            showInitDialog()
+            showInitPanel()
         } else {
             showEditorUI()
         }
     }
 
-    private fun showInitDialog() {
-        val placeholder = JBLabel("Initializing...", SwingConstants.CENTER)
-        mainPanel.add(placeholder, BorderLayout.CENTER)
+    private fun showInitPanel() {
+        val initPanel = JPanel(GridBagLayout())
+        val gbc = GridBagConstraints().apply {
+            insets = Insets(4, 4, 4, 4)
+            gridy = 0
+        }
 
-        ApplicationManager.getApplication().invokeLater {
-            val url = Messages.showInputDialog(
-                project,
-                "Enter Stepik course URL (e.g., https://stepik.org/course/123/syllabus):",
-                "Initialize Stepik Course",
-                null,
-            )
+        val label = JBLabel("Enter Stepik course URL:")
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.CENTER
+        initPanel.add(label, gbc)
 
-            if (url.isNullOrBlank()) {
-                mainPanel.removeAll()
-                val emptyLabel = JBLabel("No course URL provided. Reopen the file to try again.", SwingConstants.CENTER)
-                mainPanel.add(emptyLabel, BorderLayout.CENTER)
-                mainPanel.revalidate()
-                return@invokeLater
+        val urlField = JBTextField(40).apply {
+            emptyText.setText("https://stepik.org/course/123/syllabus")
+        }
+        gbc.gridy = 1
+        initPanel.add(urlField, gbc)
+
+        val statusLabel = JBLabel(" ")
+        gbc.gridy = 3
+        initPanel.add(statusLabel, gbc)
+
+        val fetchButton = JButton("Fetch Course")
+        gbc.gridy = 2
+        initPanel.add(fetchButton, gbc)
+
+        fetchButton.addActionListener {
+            val url = urlField.text.trim()
+            if (url.isBlank()) {
+                statusLabel.text = "Please enter a URL."
+                return@addActionListener
             }
-
             val courseId = extractCourseId(url)
             if (courseId == null) {
-                mainPanel.removeAll()
-                val errorLabel = JBLabel("Invalid URL. Expected format: https://stepik.org/course/{id}/...", SwingConstants.CENTER)
-                mainPanel.add(errorLabel, BorderLayout.CENTER)
-                mainPanel.revalidate()
-                return@invokeLater
+                statusLabel.text = "Invalid URL. Expected: https://stepik.org/course/{id}/..."
+                return@addActionListener
             }
-
             val basePath = project.basePath
             if (basePath == null) {
-                Messages.showErrorDialog(project, "Cannot determine project root.", "Error")
-                return@invokeLater
+                statusLabel.text = "Cannot determine project root."
+                return@addActionListener
             }
-
             val credentials = EnvReader.readCredentials(basePath)
             if (credentials == null) {
-                mainPanel.removeAll()
-                val errorLabel = JBLabel(
-                    "Missing .env file or STEPIK_CLIENT_ID/STEPIK_CLIENT_SECRET. Add them to .env in the project root.",
-                    SwingConstants.CENTER,
-                )
-                mainPanel.add(errorLabel, BorderLayout.CENTER)
-                mainPanel.revalidate()
-                return@invokeLater
+                statusLabel.text = "Missing STEPIK_CLIENT_ID / STEPIK_CLIENT_SECRET in .env"
+                return@addActionListener
             }
-
+            fetchButton.isEnabled = false
+            urlField.isEnabled = false
+            statusLabel.text = "Fetching course..."
             fetchCourse(url, courseId, credentials)
         }
+
+        mainPanel.add(initPanel, BorderLayout.CENTER)
     }
 
     private fun fetchCourse(url: String, courseId: Int, credentials: Pair<String, String>) {

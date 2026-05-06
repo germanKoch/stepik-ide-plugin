@@ -2,6 +2,7 @@ package org.example.stepik.service
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -40,11 +41,19 @@ class StepikProjectService(private val project: Project) {
     }
 
     fun saveFile(file: VirtualFile, data: StepikFileData) {
-        val content = json.encodeToString(StepikFileData.serializer(), data)
-        com.intellij.openapi.application.ApplicationManager.getApplication().runWriteAction {
-            file.setBinaryContent(content.toByteArray(StandardCharsets.UTF_8))
-        }
+        val bytes = json.encodeToString(StepikFileData.serializer(), data).toByteArray(StandardCharsets.UTF_8)
         cache[file.path] = data
+        val app = ApplicationManager.getApplication()
+        val writeAction = Runnable {
+            app.runWriteAction {
+                file.setBinaryContent(bytes)
+            }
+        }
+        if (app.isDispatchThread) {
+            writeAction.run()
+        } else {
+            app.invokeAndWait(writeAction)
+        }
     }
 
     fun getCached(file: VirtualFile): StepikFileData? = cache[file.path]
